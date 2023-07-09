@@ -6,10 +6,15 @@ import {
     updateUser
 } from "../repositories/user";
 
+import bcrypt from 'bcrypt';
+
 import { Request, Response } from "express";
 
 export const create = async (req: Request, res: Response) => {
+    const BCRYPT_SALT_ROUNDS = 10;
+
     try {
+        req.body.password = bcrypt.hashSync(req.body.password, BCRYPT_SALT_ROUNDS)
         const user = await createUser(req.body);
         res.status(200).send(user);
     } catch (error) {
