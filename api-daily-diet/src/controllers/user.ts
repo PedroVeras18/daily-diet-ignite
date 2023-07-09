@@ -7,15 +7,16 @@ import {
 } from "../repositories/user";
 
 import bcrypt from 'bcrypt';
-
 import { Request, Response } from "express";
+import { userValidation } from "../validations/user";
 
 export const create = async (req: Request, res: Response) => {
     const BCRYPT_SALT_ROUNDS = 10;
 
     try {
         req.body.password = bcrypt.hashSync(req.body.password, BCRYPT_SALT_ROUNDS)
-        const user = await createUser(req.body);
+        const data = userValidation.parse(req.body)
+        const user = await createUser(data);
         res.status(200).send(user);
     } catch (error) {
         res.status(400).send(error);
